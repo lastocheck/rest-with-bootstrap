@@ -44,19 +44,12 @@ public class WebSecurityConfig {
         http.authenticationProvider(authenticationProvider());
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .usernameParameter("username")
-                        .successHandler(successUserHandler)
-                        .permitAll())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/v1/users/*").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/v1").authenticated()
                         .anyRequest().authenticated()
                 )
-                .logout(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
