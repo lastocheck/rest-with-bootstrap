@@ -6,14 +6,14 @@
     <meta charset="UTF-8">
 </head>
 <body>
-<nav class="col-md-2 p-0 pt-3 nav nav-pills flex-column mb-auto" >
+<nav class="col-md-2 p-0 pt-3 nav nav-pills flex-column mb-auto" id="sidebarNav">
 
-    <a sec:authorize="hasRole('ADMIN')" href="/admin" class="nav-link" th:classappend="${currentPath == '/admin' ? 'active' : ''}" >
-        Admin
-    </a>
-    <a href="/user" class="nav-link" th:classappend="${currentPath == '/user' ? 'active' : ''}">
-        User
-    </a>
+<!--    <a sec:authorize="hasRole('ADMIN')" href="/admin" class="nav-link" th:classappend="${currentPath == '/admin' ? 'active' : ''}" >-->
+<!--        Admin-->
+<!--    </a>-->
+<!--    <a href="/user" class="nav-link" th:classappend="${currentPath == '/user' ? 'active' : ''}">-->
+<!--        User-->
+<!--    </a>-->
 
 </nav>
 </body>
