@@ -1,5 +1,7 @@
 package com.example.spring_boot_crud_mvc.rest;
 
+import com.example.spring_boot_crud_mvc.dto.UserDTO;
+import com.example.spring_boot_crud_mvc.mapper.UserMapper;
 import com.example.spring_boot_crud_mvc.model.User;
 import com.example.spring_boot_crud_mvc.service.RoleService;
 import com.example.spring_boot_crud_mvc.service.UserService;
@@ -25,8 +27,8 @@ public class UsersRestController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUsers().stream().map(UserMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
