@@ -21,9 +21,9 @@ async function populatePage() {
 
     $('#idCell').text(user.id);
     $('#usernameCell').text(user.username);
-    $('#emailCell').text(user.contactInfo.email);
-    $('#phoneCell').text(user.contactInfo.phone);
-    $('#rolesCell').text(user.roles.map(role => role.name.substring(5))).toString();
+    $('#emailCell').text(user.email);
+    $('#phoneCell').text(user.phone);
+    $('#rolesCell').text(user.roles);
 
 }
 
