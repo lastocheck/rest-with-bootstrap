@@ -1,37 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/fragments/layouts/base_layout}">
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{/fragments/layouts/base_layout}"
+>
     <head>
         <title>User</title>
     </head>
     <body>
+        <div layout:fragment="content">
+            <script type="text/javascript" th:src="@{/js/user/createUserTable.js}"></script>
 
-    <div layout:fragment="content">
-        <h1 th:text="'User ' + ${user.getUsername()}"></h1>
-        <div class="card mt-3" >
-            <h5 class="card-header p-3">About user</h5>
-            <div class="card-body">
-                <table class="table table-striped border-top">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Roles</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td  th:text="${user.getId()}"></td>
-                        <td  th:text="${user.getUsername()}"></td>
-                        <td  th:text="${user.getContactInfo().getEmail()}"></td>
-                        <td  th:text="${user.getContactInfo().getPhone()}"></td>
-                        <td  th:text="${@templatesUtil.getRolesStringFromAuthorities(user.getRoles())}"></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <h1 id="userMainHeading"></h1>
+            <div class="card mt-3">
+                <h5 class="card-header p-3">About user</h5>
+                <div class="card-body">
+                    <table class="table table-striped border-top" id="userTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Roles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="idCell"></td>
+                                <td id="usernameCell"></td>
+                                <td id="emailCell"></td>
+                                <td id="phoneCell"></td>
+                                <td id="rolesCell"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
     </body>
 </html>

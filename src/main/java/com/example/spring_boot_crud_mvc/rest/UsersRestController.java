@@ -1,4 +1,4 @@
-package com.example.spring_boot_crud_mvc.controller;
+package com.example.spring_boot_crud_mvc.rest;
 
 import com.example.spring_boot_crud_mvc.model.User;
 import com.example.spring_boot_crud_mvc.service.RoleService;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
-public class UsersController {
+public class UsersRestController {
 
     private final UserService userService;
 
@@ -18,7 +18,7 @@ public class UsersController {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UsersController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
+    public UsersRestController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
