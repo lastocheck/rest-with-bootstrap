@@ -21,27 +21,32 @@ function objectifyForm(inp){
 
 let userList = [];
 
-window.openEditModal = (user) => {
-    //get user from userList so that when modal is opened again after updating, it displayed correct data in inputs
+const openUserModal = (user, mode) => {
+    //get user from userList so that when modal is opened again after updating, it displays correct data in inputs
     user = userList.find(u => u.id === user.id);
 
-    $('#editModal').modal().show();
-    $('.modal-backdrop').show()
+    const modalId = mode === 'edit' ? 'editModal' : 'deleteModal';
+    const modalTitle = mode === 'edit' ? 'Edit User' : 'Delete User';
+    const isDisabled = mode === 'delete';
 
-    const form = $(`<form class="col-4" id="editModalForm">`)
+    $(`#${modalId} .modal-title`).text(modalTitle);
+    $(`#${modalId}`).modal().show();
+    $('.modal-backdrop').show();
+
+    const form = $(`<form class="col-4" id="${modalId}Form"></form>`);
 
     //iterating through the user object to build the form
     Object.entries(user).forEach(([key, value]) => {
-        const formGroup = $(`<div class="form-group mb-3" ></div>`);
+        const formGroup = $(`<div class="form-group mb-3"></div>`);
         form.append(formGroup);
-        formGroup.append(`<label for="edit${capitalizeFirstLetter(key)}" class="form-label fw-bold">${capitalizeFirstLetter(key)}</label>`)
+        formGroup.append(`<label for="${modalId}${capitalizeFirstLetter(key)}" class="form-label fw-bold">${capitalizeFirstLetter(key)}</label>`);
 
         //todo: change to roles from the server
-        const roles = ["ADMIN", "USER"]
+        const roles = ["ADMIN", "USER"];
 
         let input = null;
         if (key === 'roles') {
-            input = $(`<select class="form-select" size="${roles.length}" multiple aria-label="roles" name="roles[]" id="editRoles">`);
+            input = $(`<select class="form-select" size="${roles.length}" multiple aria-label="roles" name="roles[]" id="${modalId}Roles" ${isDisabled ? 'disabled' : ''}></select>`);
             for (const role of roles) {
                 const option = $(`<option value="${role}">${role}</option>`);
                 if (value.includes(role)) option.attr("selected", true);
@@ -49,65 +54,91 @@ window.openEditModal = (user) => {
                 input.append(option);
             }
         } else {
-            input = $(`<input type="text" class="form-control" id="edit${capitalizeFirstLetter(key)}" value="${(key !== 'password') ? value : '' }" name="${key}"/>`);
+            input = $(`<input type="text" class="form-control" id="${modalId}${capitalizeFirstLetter(key)}" value="${(key !== 'password') ? value : ''}" name="${key}" ${isDisabled ? 'disabled' : ''}/>`);
             if (key === "id") input.prop("readonly", true);
         }
         formGroup.append(input);
-    })
+    });
 
     form.on('submit', event => {
         event.preventDefault();
 
-        $.ajax('http://localhost:8080/api/v1/users', {
-            method: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify( objectifyForm(form.serializeArray())),
-            dataType: 'json',
-            success: result => {
-                console.log("PUT success");
+        if (mode === 'edit') {
+            $.ajax('http://localhost:8080/api/v1/users', {
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(objectifyForm(form.serializeArray())),
+                dataType: 'json',
+                success: result => {
+                    console.log("PUT success");
 
-                //close the modal
-                $('#editModal').modal().hide();
-                $('.modal-backdrop').hide()
-                form.remove();
+                    //close the modal
+                    $(`#${modalId}`).modal('hide');
+                    $('.modal-backdrop').hide();
+                    form.remove();
 
-                //update the changed user row
-                const row = $(`#adminUsersTable tbody tr[data-id="${result.id}"]`);
-                let colIndex = 0;
-                Object.entries(result).forEach(([key, value]) => {
-                    if (key !== 'password') {
-                        const cell = row.children().eq(colIndex);
-                        if (key === 'roles') {
-                            cell.text(value.join(", "));
-                        } else {
-                            cell.text(value);
+                    //update the changed user row
+                    const row = $(`#adminUsersTable tbody tr[data-id="${result.id}"]`);
+                    let colIndex = 0;
+                    Object.entries(result).forEach(([key, value]) => {
+                        if (key !== 'password') {
+                            const cell = row.children().eq(colIndex);
+                            if (key === 'roles') {
+                                cell.text(value.join(", "));
+                            } else {
+                                cell.text(value);
+                            }
+                            colIndex++;
                         }
-                        colIndex++;
+                    });
+
+                    //update user in userList
+                    const index = userList.findIndex(u => u.id === result.id);
+                    if (index !== -1) {
+                        userList[index] = result;
                     }
-                });
-
-                //update user in userList
-                const index = userList.findIndex(u => u.id === result.id);
-                if (index !== -1) {
-                    userList[index] = result;
+                },
+                error: (request, msg, error) => {
+                    console.log(request);
+                    console.log(msg);
+                    console.log(error);
                 }
-            },
-            error: (request,msg,error) => {
-                console.log(request);
-                console.log(msg);
-                console.log(error);
-            }
-        })
-    })
+            });
+        } else if (mode === 'delete') {
+            $.ajax(`http://localhost:8080/api/v1/users/${user.id}`, {
+                method: 'DELETE',
+                success: result => {
+                    console.log("DELETE success");
 
-    $('#editModalFormDiv').append(form);
+                    //close the modal
+                    $(`#${modalId}`).modal('hide');
+                    $('.modal-backdrop').hide();
+                    form.remove();
 
-    $('#editModal').modal('show');
-};
+                    //remove the user row from the table
+                    $(`#adminUsersTable tbody tr[data-id="${user.id}"]`).remove();
 
-window.openDeleteModal = (user) => {
+                    //remove the user from userList
+                    userList = userList.filter(u => u.id !== user.id);
+                },
+                error: (request, msg, error) => {
+                    console.log(request);
+                    console.log(msg);
+                    console.log(error);
+                }
+            });
+        }
+    });
 
+    $(`#${modalId}FormDiv`).empty().append(form);
+
+    console.log(form);
+
+    $(`#${modalId}`).modal('show');
 }
+
+window.openEditModal = (user) => openUserModal(user, "edit")
+window.openDeleteModal = (user) => openUserModal(user, "delete")
 
 $.get('http://localhost:8080/api/v1/users', (users) => {
     userList = users;
