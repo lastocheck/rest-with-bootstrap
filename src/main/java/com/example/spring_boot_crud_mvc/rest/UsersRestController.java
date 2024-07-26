@@ -40,10 +40,11 @@ public class UsersRestController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public UserDTO addUser(@RequestBody UserDTO userDTO) {
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        User user = UserMapper.toEntity(userDTO);
         userService.save(user);
-        return user;
+        return UserMapper.toDTO(userService.findById(user.getId()));
     }
 
     @PutMapping

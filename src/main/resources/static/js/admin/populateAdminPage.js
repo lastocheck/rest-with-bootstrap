@@ -163,8 +163,66 @@ $.get('http://localhost:8080/api/v1/users', (users) => {
         row.append(columns);
         $('#adminUsersTable tbody').append(row);
     }
+    createNewUserForm(users[0]);
 });
 
 $('#editModal').on('hidden.bs.modal', function () {
     $('#editModalForm').remove();
 })
+
+const createNewUserForm = (user) => {
+    const form = $(`<form class="col-4" id="newUserForm"></form>`);
+
+    //iterating through the user object to build the form
+    Object.entries(user).forEach(([key, value]) => {
+        const formGroup = $(`<div class="form-group mb-3"></div>`);
+
+        formGroup.append(`<label for="newUser${capitalizeFirstLetter(key)}" class="form-label fw-bold">${capitalizeFirstLetter(key)}</label>`);
+
+        //todo: change to roles from the server
+        const roles = ["ADMIN", "USER"];
+
+        let input = null;
+        if (key === 'roles') {
+            input = $(`<select class="form-select" size="${roles.length}" multiple aria-label="roles" name="roles[]" id="newUserRoles"></select>`);
+            for (const role of roles) {
+                const option = $(`<option value="${role}">${role}</option>`);
+
+                input.append(option);
+            }
+        } else if (key !== 'id') {
+            input = $(`<input type="text" class="form-control" id="newUser${capitalizeFirstLetter(key)}" value=""/>`);
+        }
+        formGroup.append(input);
+
+        form.append(formGroup);
+    });
+
+    form.append($(`<button class="btn btn-success" type="submit">Add user</button>-->`))
+
+    form.on('submit', event => {
+        $.ajax('http://localhost:8080/api/v1/users', {
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(objectifyForm(form.serializeArray())),
+            dataType: 'json',
+            success: result => {
+                console.log("POST success");
+
+                //add user to the userlist
+                userList.push(result)
+
+                $(`#nav-tabContent`).trigger('click');
+
+            },
+            error: (request, msg, error) => {
+                console.log(request);
+                console.log(msg);
+                console.log(error);
+            }
+        });
+    })
+
+    $(`#addUserFormContainer`).append(form)
+
+}
