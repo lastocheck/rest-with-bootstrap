@@ -2,7 +2,7 @@ const capitalizeFirstLetter = str => str.toString()[0].toUpperCase() + str.subst
 
 window.openEditModal = (user) => {
 
-    const form = $(`<form method="POST" action="/admin/update?id=${user.id}" class="col-4" id="editModalForm">`)
+    const form = $(`<form class="col-4" id="editModalForm">`)
 
     //iterating through the user object to build the form
     Object.entries(user).forEach(([key, value]) => {
@@ -29,10 +29,32 @@ window.openEditModal = (user) => {
         formGroup.append(input);
     })
 
+    form.on('submit', event => {
+        event.preventDefault();
+
+        $.ajax('http://localhost:8080/api/v1/users', {
+            method: 'PUT',
+            contentType: 'application/json',
+            success: result => {
+                console.log("PUT success");
+                $('#editModal').modal().hide();
+            },
+            error: (request,msg,error) => {
+                console.log(request);
+                console.log(msg);
+                console.log(error);
+            }
+        })
+    })
+
     $('#editModalFormDiv').append(form);
 
     $('#editModal').modal('show');
 };
+
+window.openDeleteModal = (user) => {
+
+}
 
 $.get('http://localhost:8080/api/v1/users', (users) => {
     for (const user of users) {
@@ -45,6 +67,12 @@ $.get('http://localhost:8080/api/v1/users', (users) => {
         columns.push($('<td></td>').append(editButton));
         editButton.on('click', function() {
             openEditModal(user);
+        });
+
+        const deleteButton = $('<button type="button" class="btn btn-danger">Delete</button>')
+        columns.push($('<td></td>').append(deleteButton));
+        deleteButton.on('click', function() {
+            openDeleteModal(user);
         });
 
         row.append(columns);
