@@ -12,6 +12,7 @@ public class UserMapper {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),
+                user.getPassword(),
                 user.getContactInfo().getEmail(),
                 user.getContactInfo().getPhone(),
                 user.getRoles().stream().map(role -> role.getName().substring(5)).collect(Collectors.toSet()));
