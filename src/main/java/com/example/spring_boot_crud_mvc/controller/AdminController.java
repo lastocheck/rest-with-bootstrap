@@ -57,9 +57,6 @@ public class AdminController {
 
     @PostMapping("/update")
     public String updateUser(@ModelAttribute("user") User newUserDetails, @RequestParam List<Integer> roleIds) {
-//        System.out.println("updating with new user details: " + newUserDetails);
-//        System.out.println("roleIds: " + roleIds);
-//        if (true) return "redirect:/admin";
         User user = userService.findById(newUserDetails.getId());
         Set<Role> roles = roleIds.stream().map(roleService::findById).collect(Collectors.toSet());
         user.setRoles(roles);

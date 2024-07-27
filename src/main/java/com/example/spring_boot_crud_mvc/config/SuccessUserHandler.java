@@ -1,6 +1,5 @@
 package com.example.spring_boot_crud_mvc.config;
 
-import com.example.spring_boot_crud_mvc.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
