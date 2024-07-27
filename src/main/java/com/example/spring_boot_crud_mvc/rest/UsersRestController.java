@@ -6,6 +6,7 @@ import com.example.spring_boot_crud_mvc.model.Role;
 import com.example.spring_boot_crud_mvc.model.User;
 import com.example.spring_boot_crud_mvc.service.RoleService;
 import com.example.spring_boot_crud_mvc.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +24,18 @@ public class UsersRestController {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UsersRestController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
+    private final UserMapper userMapper;
+
+    public UsersRestController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService, UserMapper userMapper) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
+        this.userMapper = userMapper;
     }
 
     @GetMapping
     public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers().stream().map(UserMapper::toDTO).toList();
+        return userService.getAllUsers().stream().map(userMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
@@ -41,27 +45,24 @@ public class UsersRestController {
 
     @PostMapping
     public UserDTO addUser(@RequestBody UserDTO userDTO) {
-        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        User user = UserMapper.toEntity(userDTO);
+        System.out.println("POST /users");
+        System.out.println(userDTO);
+
+        User user = userMapper.toEntity(userDTO);
         userService.save(user);
-        return UserMapper.toDTO(userService.findById(user.getId()));
+        return userMapper.toDTO(userService.findById(user.getId()));
     }
 
     @PutMapping
     public UserDTO editUser(@RequestBody UserDTO userDTO) {
-        User user = UserMapper.toEntity(userDTO);
+        User user = userMapper.toEntity(userDTO);
         if (userDTO.getPassword().isEmpty()) {
             User oldUser = userService.findById(userDTO.getId());
             user.setPassword(oldUser.getPassword());
-        } else {
-            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
-        Set<Role> roles = userDTO.getRoles().stream().map(roleStr -> roleService.findByName("ROLE_" + roleStr)).collect(Collectors.toSet());
-        user.setRoles(roles);
-
         userService.update(user);
-        return UserMapper.toDTO(user);
+        return userMapper.toDTO(user);
     }
 
     @DeleteMapping("/{id}")

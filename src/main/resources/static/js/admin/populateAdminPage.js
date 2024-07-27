@@ -177,7 +177,7 @@ const createNewUserForm = (user) => {
     Object.entries(user).forEach(([key, value]) => {
         const formGroup = $(`<div class="form-group mb-3"></div>`);
 
-        formGroup.append(`<label for="newUser${capitalizeFirstLetter(key)}" class="form-label fw-bold">${capitalizeFirstLetter(key)}</label>`);
+        if (key !== 'id') formGroup.append(`<label for="newUser${capitalizeFirstLetter(key)}" class="form-label fw-bold">${capitalizeFirstLetter(key)}</label>`);
 
         //todo: change to roles from the server
         const roles = ["ADMIN", "USER"];
@@ -191,14 +191,14 @@ const createNewUserForm = (user) => {
                 input.append(option);
             }
         } else if (key !== 'id') {
-            input = $(`<input type="text" class="form-control" id="newUser${capitalizeFirstLetter(key)}" value=""/>`);
+            input = $(`<input type="text" class="form-control" id="newUser${capitalizeFirstLetter(key)}" value="" name="${key}"/>`);
         }
         formGroup.append(input);
 
         form.append(formGroup);
     });
 
-    form.append($(`<button class="btn btn-success" type="submit">Add user</button>-->`))
+    form.append($(`<button class="btn btn-success" type="submit">Add user</button>`))
 
     form.on('submit', event => {
         $.ajax('http://localhost:8080/api/v1/users', {
