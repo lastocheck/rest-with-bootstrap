@@ -3,6 +3,8 @@ package com.example.spring_boot_crud_mvc.service;
 import com.example.spring_boot_crud_mvc.model.User;
 import com.example.spring_boot_crud_mvc.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,12 +18,14 @@ import java.util.Optional;
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService, UserService {
 
+    Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
+        logger.info("loadUserByUsername %s".formatted(username));
         User user = userRepository.getUserByUsername(username);
 
         if (user == null) {

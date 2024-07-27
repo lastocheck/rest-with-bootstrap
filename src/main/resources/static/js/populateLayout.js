@@ -1,4 +1,5 @@
 $.get('http://localhost:8080/api/v1/user', (user) => {
+    console.log(`GET /user in populateLayout to populate header and sidebar`)
     $('#headerUsername').text(user.username);
     $('#headerRoles').text(user.roles);
 

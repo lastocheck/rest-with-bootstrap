@@ -64,6 +64,7 @@ const openUserModal = (user, mode) => {
         event.preventDefault();
 
         if (mode === 'edit') {
+            console.log(`PUT /users in populateAdmin to edit user`);
             $.ajax('http://localhost:8080/api/v1/users', {
                 method: 'PUT',
                 contentType: 'application/json',
@@ -105,6 +106,7 @@ const openUserModal = (user, mode) => {
                 }
             });
         } else if (mode === 'delete') {
+            console.log(`DELETE /users in populateAdmin to delete user`);
             $.ajax(`http://localhost:8080/api/v1/users/${user.id}`, {
                 method: 'DELETE',
                 success: result => {
@@ -141,6 +143,7 @@ window.openEditModal = (user) => openUserModal(user, "edit")
 window.openDeleteModal = (user) => openUserModal(user, "delete")
 
 $.get('http://localhost:8080/api/v1/users', (users) => {
+    console.log(`GET /users in populateAdmin to populate users table`);
     userList = users;
     for (const user of users) {
         const row = $(`<tr></tr>`).attr('data-id', user.id);
@@ -201,6 +204,7 @@ const createNewUserForm = (user) => {
     form.append($(`<button class="btn btn-success" type="submit">Add user</button>`))
 
     form.on('submit', event => {
+        console.log(`POST /users in populateAdmin to add new user`);
         $.ajax('http://localhost:8080/api/v1/users', {
             method: 'POST',
             contentType: 'application/json',
