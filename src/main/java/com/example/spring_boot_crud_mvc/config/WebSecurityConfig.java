@@ -43,6 +43,12 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authenticationProvider(authenticationProvider());
         http
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .usernameParameter("username")
+                        .successHandler(successUserHandler)
+                        .permitAll())
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/users/*").hasAnyRole("ADMIN")
@@ -50,7 +56,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1").authenticated()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .logout(Customizer.withDefaults());
+//                .httpBasic(Customizer.withDefaults());
+
 
         return http.build();
     }

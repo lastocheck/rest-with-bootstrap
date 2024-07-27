@@ -204,6 +204,8 @@ const createNewUserForm = (user) => {
     form.append($(`<button class="btn btn-success" type="submit">Add user</button>`))
 
     form.on('submit', event => {
+        event.preventDefault();
+
         console.log(`POST /users in populateAdmin to add new user`);
         $.ajax('http://localhost:8080/api/v1/users', {
             method: 'POST',
@@ -216,7 +218,7 @@ const createNewUserForm = (user) => {
                 //add user to the userlist
                 userList.push(result)
 
-                $(`#nav-tabContent`).trigger('click');
+                $(`#nav-users-tab`).trigger('click');
 
             },
             error: (request, msg, error) => {

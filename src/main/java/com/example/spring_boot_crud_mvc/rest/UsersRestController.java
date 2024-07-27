@@ -41,9 +41,6 @@ public class UsersRestController {
 
     @PostMapping
     public UserDTO addUser(@RequestBody UserDTO userDTO) {
-        System.out.println("POST /users");
-        System.out.println(userDTO);
-
         User user = userMapper.toEntity(userDTO);
         userService.save(user);
         return userMapper.toDTO(userService.findById(user.getId()));
