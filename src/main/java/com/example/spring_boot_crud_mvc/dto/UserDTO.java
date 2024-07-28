@@ -1,11 +1,23 @@
 package com.example.spring_boot_crud_mvc.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.Set;
 
 public class UserDTO {
     private Integer id;
+
+    @NotBlank(message = "Username should not be empty")
+    @Size(min = 3, max = 25, message = "Username's length must be between 3 and 25")
     private String username;
+
+    @NotBlank(message = "Password should not be empty")
+    @Size(min = 5, max = 25, message = "Password's length must be between 5 and 25")
     private String password;
+
+    @Email
     private String email;
     private String phone;
     private Set<String> roles;

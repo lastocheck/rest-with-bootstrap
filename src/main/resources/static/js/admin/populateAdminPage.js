@@ -27,7 +27,7 @@ $(document).ready(() => {
             console.log(`GET /users in populateAdmin to populate users table`);
             userList = users;
             populateUserTable(users, openUserModal);
-            createNewUserForm(users[0]);
+            createNewUserForm(users[0], updateUserList);
         })
         .fail((request, msg, error) => {
             console.log(request, msg, error);

@@ -1,10 +1,12 @@
 package com.example.spring_boot_crud_mvc.model;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Email;
 
 @Embeddable
 public class ContactInfo {
 
+    @Email
     private String email;
     private String phone;
 

@@ -1,7 +1,7 @@
 import { capitalizeFirstLetter, objectifyForm } from './utils.js';
 import { createUser } from './api.js';
 
-export const createNewUserForm = (user) => {
+export const createNewUserForm = (user, updateUserListCallback) => {
     const form = $(`<form class="col-4" id="newUserForm"></form>`);
     const roles = ["ADMIN", "USER"]; // TODO: Fetch roles from server
 
@@ -25,10 +25,10 @@ export const createNewUserForm = (user) => {
 
     form.on('submit', event => {
         event.preventDefault();
-        handleNewUser(form);
+        handleNewUser(form, updateUserListCallback);
     });
 
-    $(`#addUserFormContainer`).append(form);
+    $(`#addUserFormContainer`).empty().append(form);
 };
 
 const createRolesSelect = (prefix, roles) => {
@@ -40,11 +40,13 @@ const createRolesSelect = (prefix, roles) => {
     return select;
 };
 
-const handleNewUser = (form) => {
+const handleNewUser = (form, updateUserListCallback) => {
     createUser(objectifyForm(form.serializeArray()))
         .done(result => {
             console.log("POST success");
+            updateUserListCallback(result);
             $(`#nav-users-tab`).trigger('click');
+            form[0].reset();
         })
         .fail((request, msg, error) => {
             console.log(request, msg, error);

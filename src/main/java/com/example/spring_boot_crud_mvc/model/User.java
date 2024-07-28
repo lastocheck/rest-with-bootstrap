@@ -1,6 +1,9 @@
 package com.example.spring_boot_crud_mvc.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +20,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Username should not be empty")
+    @Size(min = 3, max = 25, message = "Username's length must be between 3 and 25")
+    @Column(unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Password should not be empty")
+    @Column
     private String password;
 
     @Embedded
