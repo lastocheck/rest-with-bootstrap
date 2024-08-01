@@ -1,5 +1,6 @@
 package com.example.spring_boot_crud_mvc.service;
 
+import com.example.spring_boot_crud_mvc.exceptions.RoleNotFoundException;
 import com.example.spring_boot_crud_mvc.model.Role;
 import com.example.spring_boot_crud_mvc.repository.RoleRepository;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,9 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
+    @Transactional(noRollbackFor = RoleNotFoundException.class)
     public Role findByName(String name) {
-        return roleRepository.findByName(name).orElseThrow(() ->new RuntimeException("No role found with the name %s".formatted(name)));
+        return roleRepository.findByName(name).orElseThrow(() ->new RoleNotFoundException("No role found with the name %s".formatted(name)));
     }
 
     @Override
@@ -34,6 +36,6 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public Role findById(Integer id) {
-        return roleRepository.findById(id).orElseThrow(() -> new RuntimeException("couldn't find user with id " + id));
+        return roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException("couldn't find role with id " + id));
     }
 }
