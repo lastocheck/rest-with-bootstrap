@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "spring_mvc"
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      timeout: 20s
+      retries: 10
+  kata-rest:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
